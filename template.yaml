@@ -10,7 +10,7 @@ Description: >-
 # Transform section specifies one or more macros that AWS CloudFormation uses to process your template
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
 Transform:
-- AWS::Serverless-2016-10-31
+  - AWS::Serverless-2016-10-31
 
 # Resources declares the AWS resources that you want to include in the stack
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
@@ -38,6 +38,10 @@ Resources:
             RequestParameters:
               - method.request.querystring.acronym:
                 Required: true
+      Environment:
+        Variables:
+          DATAMUSE_API_ENDPOINT: !Ref DatamuseApiEndpoint
+          DATAMUSE_WORDS_API: !Ref DatamuseWordsApi
 
   # This is a Lambda function config associated with the source code: summarize.js
   summarizeFunction:
@@ -59,6 +63,12 @@ Resources:
             RequestParameters:
               - method.request.querystring.title:
                 Required: true
+      Environment:
+        Variables:
+          OPENAI_API_ENDPOINT: !Ref OpenAiApiEndpoint
+          OPENAI_TOKEN: !Ref OpenAiToken
+          OPENAI_COMPLETIONS_API: !Ref OpenAiCompletionsApi
+          OPENAI_GPT3_MODEL: !Ref OpenAiGpt3Model
 
 Outputs:
   WebEndpoint:

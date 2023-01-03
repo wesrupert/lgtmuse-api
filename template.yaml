@@ -12,6 +12,27 @@ Description: >-
 Transform:
   - AWS::Serverless-2016-10-31
 
+Parameters:
+  DatamuseApiEndpoint:
+    Type: String
+    Default: https://api.datamuse.com
+  DatamuseWordsApi:
+    Type: String
+    Default: words
+
+  OpenAiApiEndpoint:
+    Type: String
+    Default: https://api.openai.com
+  OpenAiCompletionsApi:
+    Type: String
+    Default: v1/completions
+  OpenAiGpt3Model:
+    Type: String
+    Default: text-davinci-003
+  OpenAiToken:
+    Type: String
+    Default: REPLACEME
+
 # Resources declares the AWS resources that you want to include in the stack
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 Resources:
@@ -37,7 +58,7 @@ Resources:
             Method: GET
             RequestParameters:
               - method.request.querystring.acronym:
-                Required: true
+                  Required: true
       Environment:
         Variables:
           DATAMUSE_API_ENDPOINT: !Ref DatamuseApiEndpoint
@@ -62,7 +83,7 @@ Resources:
             Method: GET
             RequestParameters:
               - method.request.querystring.title:
-                Required: true
+                  Required: true
       Environment:
         Variables:
           OPENAI_API_ENDPOINT: !Ref OpenAiApiEndpoint

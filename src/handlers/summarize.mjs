@@ -24,7 +24,7 @@ export const summarizeHandler = async (event) => {
   const title = event.queryStringParameters["title"] || "LGTM";
 
   // All log statements are written to CloudWatch
-  console.info(`Summarize: Received title "${title}":`, event);
+  console.log(`Summarize: Received title "${title}":`, event);
 
   let summary = "Hmm, I'm not sure what this book would be about!";
   try {
@@ -34,11 +34,13 @@ export const summarizeHandler = async (event) => {
       max_tokens: 1024,
       temperature: 0.7,
     });
-    console.info(
+    console.log(
       `response from: OpenAI statusCode: ${response.status} body: ${response.data}`
     );
 
-    summary = response.data?.choices?.[0]?.text.replace(/^\n*/, "") || summary;
+    summary =
+      response.data?.choices?.[0]?.text?.split("\n")?.filter((s) => !!s) ||
+      summary;
   } catch (err) {
     console.log("Error", err);
   }
@@ -48,7 +50,7 @@ export const summarizeHandler = async (event) => {
     body: JSON.stringify({ summary }),
   };
 
-  console.info(
+  console.log(
     `response from: ${event.path} statusCode: ${ret.statusCode} body: ${ret.body}`
   );
   return ret;

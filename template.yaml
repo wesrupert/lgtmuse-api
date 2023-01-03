@@ -1,0 +1,66 @@
+# This is the SAM template that represents the architecture of your serverless application
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
+
+# The AWSTemplateFormatVersion identifies the capabilities of the template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  lgtmuse-api
+
+# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
+Transform:
+- AWS::Serverless-2016-10-31
+
+# Resources declares the AWS resources that you want to include in the stack
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
+Resources:
+  # Each Lambda function is defined by properties:
+  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+
+  # This is a Lambda function config associated with the source code: derive.js
+  deriveFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/derive.deriveHandler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: A simple API to get a reverse acronym from the input string
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /derive
+            Method: GET
+            RequestParameters:
+              - method.request.querystring.acronym:
+                Required: true
+
+  # This is a Lambda function config associated with the source code: summarize.js
+  summarizeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/summarize.summarizeHandler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: A simple example API to get a book summary based on the given title
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /summarize
+            Method: GET
+            RequestParameters:
+              - method.request.querystring.title:
+                Required: true
+
+Outputs:
+  WebEndpoint:
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
